@@ -5,6 +5,7 @@ import Sessions
 import Crypto
 import Transport
 import Sockets
+import Lingo
 
 @available(*, deprecated: 2.1, message: "This property will be removed in subsequent releases")
 public let VERSION = "[Deprecated] 2.0.6"
@@ -45,6 +46,10 @@ public final class Droplet {
     /// Provides access to the underlying
     /// `HashProtocol` for hashing data.
     public let hash: HashProtocol
+    
+    /// Provides access to the underlying
+    /// localization engine.
+    public let localization: LocalizationProtocol
 
     /// Provides access to the underlying
     /// `CipherProtocol` for encrypting and
@@ -85,7 +90,8 @@ public final class Droplet {
         commands: [Command]? = nil,
         view: ViewRenderer? = nil,
         cache: CacheProtocol? = nil,
-        mail: MailProtocol? = nil
+        mail: MailProtocol? = nil,
+        localization: LocalizationProtocol? = nil
     ) throws {
         var config = try config ?? Config()
         
@@ -108,6 +114,7 @@ public final class Droplet {
         config.addConfigurable(middleware: FileMiddleware.init, name: "file")
         config.addConfigurable(middleware: CORSMiddleware.init, name: "cors")
         config.addConfigurable(mail: Mailgun.init, name: "mailgun")
+        config.addConfigurable(localization: Lingo.init, name: "localization")
 
         // port override
         if let port = config.arguments.value(for: "port")?.int {
@@ -124,6 +131,7 @@ public final class Droplet {
         let view = try view ?? config.resolveView()
         let cache = try cache ?? config.resolveCache()
         let mail = try mail ?? config.resolveMail()
+        let localization = try localization ?? config.resolveLocalization()
 
         // settings
         let environment = config.environment
@@ -192,6 +200,7 @@ public final class Droplet {
         self.mail = mail
         self.responder = responder
         self.storage = [:]
+        self.localization = localization
 
         // set config
         self.config = config

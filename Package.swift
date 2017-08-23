@@ -38,6 +38,8 @@ let package = Package(
 
         // Swift implementation of the BCrypt password hashing function
         .Package(url: "https://github.com/vapor/bcrypt.git", majorVersion: 1),
+        
+        .Package(url: "https://github.com/miroslavkovac/Lingo.git", majorVersion: 2),
     ],
     exclude: [
         "Sources/Development",
